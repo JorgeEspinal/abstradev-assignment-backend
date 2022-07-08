@@ -3,6 +3,10 @@ import controller from "../controllers/Transaction";
 
 const router = express.Router();
 
+router.get("/api", (_req, res, _next) => {
+  res.status(200).json({ message: "API" });
+});
+
 router.post("/create", controller.createTransaction);
 router.get("/get/:transactionId", controller.readTransaction);
 router.get("/filter", controller.filterAdvanceTransactions);
