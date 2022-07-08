@@ -8,7 +8,7 @@ const MONGO_URL = `mongodb+srv://${MONGO_USERNAME}:${MONGO_PASSWORD}@cluster0.mm
 
 const SERVER_PORT = process.env.SERVER_PORT
   ? Number(process.env.SERVER_PORT)
-  : 5000;
+  : 3000;
 
 export const config = {
   mongo: {
