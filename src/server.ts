@@ -16,57 +16,50 @@ mongoose
     console.log(error);
   });
 
-const StartServer = () => {
-  router.use((req, res, next) => {
+router.use((req, res, next) => {
+  console.log(
+    `Incomming -> Method: [${req.method}] - URL: [${req.url}] - IP: [${req.socket.remoteAddress}]`
+  );
+
+  res.on("finish", () => {
     console.log(
-      `Incomming -> Method: [${req.method}] - URL: [${req.url}] - IP: [${req.socket.remoteAddress}]`
+      `Incomming -> Method: [${req.method}] - URL: [${req.url}] - IP: [${req.socket.remoteAddress}] - Status: [${res.statusCode}]`
     );
-
-    res.on("finish", () => {
-      console.log(
-        `Incomming -> Method: [${req.method}] - URL: [${req.url}] - IP: [${req.socket.remoteAddress}] - Status: [${res.statusCode}]`
-      );
-    });
-
-    next();
   });
 
-  router.use(express.urlencoded({ extended: true }));
-  router.use(express.json());
+  next();
+});
 
-  /**API rules */
-  router.use((req, res, next) => {
-    res.header("Access-Control-Allow-Origin", "*");
-    res.header(
-      "Access-Control-Allow-Headers",
-      "Origin, X-Requested-With, Content-Type, Accept, Authorization"
-    );
+router.use(express.urlencoded({ extended: true }));
+router.use(express.json());
 
-    if (req.method == "OPTIONS") {
-      res.header(
-        "Access-Control-Allow-Methods",
-        "PUT, POST, PATCH, DELETE, GET"
-      );
-      return res.status(200).json({});
-    }
+/**API rules */
+router.use((req, res, next) => {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header(
+    "Access-Control-Allow-Headers",
+    "Origin, X-Requested-With, Content-Type, Accept, Authorization"
+  );
 
-    next();
-  });
+  if (req.method == "OPTIONS") {
+    res.header("Access-Control-Allow-Methods", "PUT, POST, PATCH, DELETE, GET");
+    return res.status(200).json({});
+  }
 
-  /**My routes */
-  router.use("/transactions", transactionRouters);
+  next();
+});
 
-  /**ERROR handler */
-  router.use((_req, res, _next) => {
-    const error = new Error("Not found");
-    console.log(error);
+/**My routes */
+router.use("/transactions", transactionRouters);
 
-    return res.status(404).json({ message: error.message });
-  });
+/**ERROR handler */
+router.use((_req, res, _next) => {
+  const error = new Error("Not found");
+  console.log(error);
 
-  http.createServer(router).listen(config.server.port, () => {
-    console.log(`Server is running on port ${config.server.port}.`);
-  });
-};
+  return res.status(404).json({ message: error.message });
+});
 
-StartServer();
+router.listen(config.server.port, () => {
+  console.log(`Server is running on port ${config.server.port}.`);
+});
