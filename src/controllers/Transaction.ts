@@ -15,7 +15,7 @@ const createTransaction = (
   const transaction = new Transaction({
     _id: new mongoose.Types.ObjectId(),
     transactionId: hashId,
-    timestamp: new Date().toDateString(),
+    timestamp: new Date(),
     ...data,
   });
 
