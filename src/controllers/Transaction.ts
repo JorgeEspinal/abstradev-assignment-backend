@@ -22,47 +22,47 @@ const createTransaction = (
   transaction
     .save()
     .then((dataSave) => {
-      res.status(201).json({ dataSave });
+      res.status(201).json(dataSave);
     })
     .catch((error) => {
       res.status(500).json({ error });
     });
 };
 
-const readTransaction = (req: Request, res: Response, _next: NextFunction) => {
-  const transactionId = req.params.transactionId;
+const readTransactionById = (
+  req: Request,
+  res: Response,
+  _next: NextFunction
+) => {
+  const transactionId = req.query.transactionId;
 
-  return Transaction.findById(transactionId)
+  return Transaction.findOne({ transactionId: transactionId })
     .then((transaction) => {
       return transaction
-        ? res.status(200).json({ transaction })
+        ? res.status(200).json(transaction)
         : res.status(404).json({ message: "Not found" });
     })
     .catch((error) => res.status(500).json({ error }));
 };
 
-const filterAdvanceTransactions = (
+const filtersAdvanceTransactions = (
   req: Request,
   res: Response,
   _next: NextFunction
 ) => {
-  const query = { ...req.query };
+  const filters = req.body;
 
-  for (const name in query) {
-    console.log(name, query[name]);
-  }
-
-  return Transaction.find(query)
-    .then((transaction) => {
-      return transaction
-        ? res.status(200).json({ transaction })
+  return Transaction.find({ transactionMetadata: { $in: [filters] } })
+    .then((transactions) => {
+      return transactions
+        ? res.status(200).json(transactions)
         : res.status(404).json({ message: "Not found" });
     })
     .catch((error) => res.status(500).json({ error }));
 };
 
 const readAll = (req: Request, res: Response, _next: NextFunction) => {
-  const page: number = Number(req.query.page) || 1;
+  const page: number = Number(req.query.page) || 0;
   const limit: number = Number(req.query.limit) || 10;
 
   return Transaction.find({})
@@ -86,7 +86,7 @@ const updateTransaction = (
 
         return transaction
           .save()
-          .then((dataSave) => res.status(201).json({ dataSave }))
+          .then((dataSave) => res.status(201).json(dataSave))
           .catch((error) => res.status(500).json({ error }));
       } else res.status(404).json({ message: "Not found" });
     })
@@ -111,8 +111,8 @@ const deleteTransaction = (
 
 export default {
   createTransaction,
-  readTransaction,
-  filterAdvanceTransactions,
+  readTransactionById,
+  filtersAdvanceTransactions,
   readAll,
   updateTransaction,
   deleteTransaction,

@@ -8,9 +8,9 @@ router.get("/api", (_req, res, _next) => {
 });
 
 router.post("/create", controller.createTransaction);
-router.get("/get/:transactionId", controller.readTransaction);
-router.get("/filter", controller.filterAdvanceTransactions);
 router.get("/get", controller.readAll);
+router.get("/byId", controller.readTransactionById);
+router.post("/filter", controller.filtersAdvanceTransactions);
 router.patch("/update/:transactionId", controller.updateTransaction);
 router.delete("/delete/:transactionId", controller.deleteTransaction);
 
